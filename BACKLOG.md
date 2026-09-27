@@ -33,8 +33,6 @@ Reopen the most recent `.md` file at launch when mdviewer starts with no files.
 - **Fail gracefully without the AppArmor profile.** If the profile isn't loaded, WebKit
   aborts the whole app on the first document. Detecting that up front and showing an
   explanation would beat a crash.
-- **Release workflow.** A `v*` tag workflow that builds the `.deb` and attaches it to a
-  GitHub release, so Check for Updates… has something to find.
 
 ## Other
 

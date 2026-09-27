@@ -1,0 +1,86 @@
+name: Release
+
+# Fires on any pushed tag starting with `v`, and can be kicked off manually.
+# Publishes a GitHub Release with the .deb for Linux x86_64 — the release that
+# the app's Check for Updates… looks for (adjmx/mdviewer, releases/latest).
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux-x86_64:
+    name: Build Linux x86_64
+    # 24.04: the first Ubuntu LTS with WebKitGTK 6.0 and GTK 4.14 (gtk4 `v4_14`).
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Build the ref being released, not whatever the workflow ran from.
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Tag must match Cargo.toml
+        # cargo-deb names and versions the package from Cargo.toml, so a tag
+        # pushed before the version bump would ship a mislabelled .deb.
+        run: |
+          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          ver=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+          if [ "${tag#v}" != "$ver" ]; then
+            echo "::error::tag $tag does not match Cargo.toml version $ver — bump before tagging"
+            exit 1
+          fi
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev libwebkitgtk-6.0-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deb
+
+      - name: Check
+        run: make check
+
+      - name: Build the .deb
+        id: deb
+        run: |
+          cargo deb
+          deb=$(ls target/debian/mdviewer_*_amd64.deb)
+          dpkg-deb --info "$deb"
+          dpkg-deb --contents "$deb"
+          echo "deb=$deb" >> "$GITHUB_OUTPUT"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          draft: false
+          generate_release_notes: true
+          body: |
+            Linux x86_64 (Ubuntu 24.04+, Debian 13+: needs WebKitGTK 6.0). Install the `.deb`:
+
+            ```bash
+            sudo apt install ./mdviewer_*_amd64.deb
+            ```
+
+            The package also installs `/etc/apparmor.d/mdviewer`, which lets WebKit's
+            web-process sandbox start on Ubuntu 23.10+ (the same `userns` grant Ubuntu
+            ships for Epiphany and Geary). Without it the app aborts on the first document.
+          files: ${{ steps.deb.outputs.deb }}

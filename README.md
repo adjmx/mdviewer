@@ -26,7 +26,11 @@ highlight.js, `viewer.js`) are shared with the macOS app.
 make install     # builds target/debian/mdviewer_<version>-1_<arch>.deb and installs it with apt
 ```
 
-Or install a downloaded release: `sudo apt install ./mdviewer_<version>-1_amd64.deb`.
+Or install a downloaded [release](https://github.com/adjmx/mdviewer/releases/latest):
+`sudo apt install ./mdviewer_<version>-1_amd64.deb`.
+
+Releasing: bump `version` in `Cargo.toml` (and `Cargo.lock`), commit, then push a `v<version>`
+tag. `.github/workflows/release.yml` refuses a tag that doesn't match `Cargo.toml`.
 
 ## Building
 
