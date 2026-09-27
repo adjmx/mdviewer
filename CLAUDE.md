@@ -35,7 +35,10 @@ document.
   `bwrap: setting up uid map: Permission denied` / `Failed to fully launch dbus-proxy`.
 - **Commands run by Claude don't see that failure.** They inherit the `claude-desktop`
   AppArmor profile, which allows userns. Test the way the desktop launches apps with
-  `aa-exec -p unconfined -- /usr/bin/mdviewer file.md` (this is how the crash was reproduced).
+  `aa-exec -p unconfined -- sh -c '/usr/bin/mdviewer file.md'`. The `sh -c` matters:
+  `aa-exec` pins the label on the program it runs directly, so without the shell mdviewer is
+  forced to `unconfined` and the profile can never attach (that reproduces the crash, but can't
+  test the fix). Check with `cat /proc/<pid>/attr/current` → `mdviewer (unconfined)`.
 - **comrak is pinned `~0.55`.** GFM's `tagfilter` is deprecated in 0.55 and removed in 0.56.
   Don't bump past 0.55 without replacing it.
 - **Dark mode** mostly comes from the GTK theme (Ubuntu flips `Yaru` ↔ `Yaru-dark` over
