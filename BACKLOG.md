@@ -27,9 +27,12 @@ Reopen the most recent `.md` file at launch when mdviewer starts with no files.
 
 ## Linux-specific
 
-- **Sandboxing.** WebKitGTK can run its web process in a bubblewrap sandbox
-  (`WebContext::set_sandbox_enabled`); worth testing against Ubuntu's AppArmor user-namespace
-  restrictions. A Flatpak would be the closest match to the macOS App Sandbox.
+- **Sandboxing the app process.** The web process is already in WebKit's bubblewrap sandbox
+  (enabled through `packaging/apparmor/mdviewer`). A Flatpak would be the closest match to
+  the macOS App Sandbox for the app process too.
+- **Fail gracefully without the AppArmor profile.** If the profile isn't loaded, WebKit
+  aborts the whole app on the first document. Detecting that up front and showing an
+  explanation would beat a crash.
 - **Release workflow.** A `v*` tag workflow that builds the `.deb` and attaches it to a
   GitHub release, so Check for Updates… has something to find.
 

@@ -1,0 +1,16 @@
+# WebKitGTK 6.0 always runs page content in a bubblewrap sandbox, which needs an
+# unprivileged user namespace. Ubuntu 23.10+ denies those to unconfined apps
+# (kernel.apparmor_restrict_unprivileged_userns=1), and WebKit then aborts the app.
+#
+# Like Ubuntu's own profiles for Epiphany, Geary and Evolution, this allows everything
+# and only exists to grant `userns` — keeping WebKit's sandbox on rather than off.
+
+abi <abi/4.0>,
+include <tunables/global>
+
+profile mdviewer /usr/bin/mdviewer flags=(unconfined) {
+  userns,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/mdviewer>
+}

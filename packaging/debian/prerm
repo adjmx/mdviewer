@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ] && command -v apparmor_parser >/dev/null 2>&1 \
+    && [ -d /sys/kernel/security/apparmor ] && [ -f /etc/apparmor.d/mdviewer ]; then
+    apparmor_parser -R /etc/apparmor.d/mdviewer || true
+fi
+
+#DEBHELPER#

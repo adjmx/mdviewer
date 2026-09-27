@@ -29,6 +29,13 @@ document.
 
 ## Things that are easy to get wrong
 
+- **The AppArmor profile is load-bearing.** WebKitGTK 6.0 always sandboxes the web process
+  with bubblewrap; on Ubuntu 23.10+ that needs `packaging/apparmor/mdviewer` (installed and
+  loaded by the .deb's postinst). Without it the app aborts on the first document with
+  `bwrap: setting up uid map: Permission denied` / `Failed to fully launch dbus-proxy`.
+- **Commands run by Claude don't see that failure.** They inherit the `claude-desktop`
+  AppArmor profile, which allows userns. Test the way the desktop launches apps with
+  `aa-exec -p unconfined -- /usr/bin/mdviewer file.md` (this is how the crash was reproduced).
 - **comrak is pinned `~0.55`.** GFM's `tagfilter` is deprecated in 0.55 and removed in 0.56.
   Don't bump past 0.55 without replacing it.
 - **Dark mode** mostly comes from the GTK theme (Ubuntu flips `Yaru` ↔ `Yaru-dark` over

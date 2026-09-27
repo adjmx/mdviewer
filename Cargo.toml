@@ -25,6 +25,7 @@ copyright = "adjmx. No license has been chosen yet; all rights reserved. Bundled
 section = "text"
 priority = "optional"
 depends = "$auto"
+maintainer-scripts = "packaging/debian/"
 extended-description = """\
 A GTK4 + WebKitGTK Markdown reader: GitHub-flavored Markdown, syntax highlighting, \
 auto-refresh on save, light and dark mode, zoom and print. Documents are kept \
@@ -33,6 +34,7 @@ scripts in documents never run."""
 assets = [
     ["target/release/mdviewer", "usr/bin/", "755"],
     ["packaging/uk.fizx.mdviewer.desktop", "usr/share/applications/", "644"],
+    ["packaging/apparmor/mdviewer", "etc/apparmor.d/mdviewer", "644"],
     ["packaging/icons/mdviewer-16.png", "usr/share/icons/hicolor/16x16/apps/mdviewer.png", "644"],
     ["packaging/icons/mdviewer-24.png", "usr/share/icons/hicolor/24x24/apps/mdviewer.png", "644"],
     ["packaging/icons/mdviewer-32.png", "usr/share/icons/hicolor/32x32/apps/mdviewer.png", "644"],

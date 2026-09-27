@@ -35,7 +35,7 @@ Needs Rust, GTK 4.14+, WebKitGTK 6.0 and [cargo-deb](https://github.com/kornelsk
 ```sh
 sudo apt install libgtk-4-dev libwebkitgtk-6.0-dev
 cargo install cargo-deb
-make dev FILE=README.md   # debug build + run
+make dev FILE=README.md   # debug build + run (WebKit sandbox off; see the Makefile)
 make check                # fmt, clippy (warnings are errors), unit tests
 make deb                  # release .deb in target/debian/
 ```
@@ -62,8 +62,12 @@ Documents never touch the network:
   frames). Links you click open in your default browser or app.
 - **Only the document's folder** is served to the page, with symlinks resolved first.
 - **Ephemeral web session** — no cookies, cache or storage are written to disk.
+- **Sandboxed web process** — WebKitGTK runs the page in a bubblewrap sandbox. The package
+  installs `/etc/apparmor.d/mdviewer`, the same one-line `userns` grant Ubuntu ships for
+  Epiphany and Geary, because Ubuntu 23.10+ otherwise blocks the sandbox and WebKit aborts.
 
-There is no equivalent of the macOS App Sandbox: the app runs with your normal file access.
+The app process itself is not sandboxed (there is no equivalent of the macOS App Sandbox): it
+runs with your normal file access, and serves the page only the document's folder.
 
 The one exception to "offline" is **Check for Updates…** (menu), which the app (not a document)
 runs only when you choose it. It calls `api.github.com/repos/adjmx/mdviewer/releases/latest` and

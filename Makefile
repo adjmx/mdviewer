@@ -6,8 +6,11 @@ FILE    ?=
 
 .PHONY: dev check test deb install uninstall icons clean
 
+# The AppArmor profile that lets WebKit's sandbox start only covers /usr/bin/mdviewer, so on
+# Ubuntu 23.10+ a dev build launched from a normal terminal would abort. Dev runs switch
+# WebKit's sandbox off instead; the installed app keeps it on.
 dev:            ## debug build + run (separate app id and cache from the installed one)
-	cargo run -- $(FILE)
+	WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 cargo run -- $(FILE)
 
 check:          ## fmt + clippy (warnings are errors) + unit tests
 	cargo fmt --check
