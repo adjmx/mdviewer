@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=mdviewer
+GenericName=Markdown Reader
+Comment=Read Markdown files. Documents never touch the network.
+Exec=mdviewer %F
+Icon=mdviewer
+Terminal=false
+Categories=Office;Viewer;
+Keywords=markdown;md;reader;viewer;
+MimeType=text/markdown;text/x-markdown;
+StartupNotify=true
+StartupWMClass=mdviewer

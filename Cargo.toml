@@ -1,0 +1,45 @@
+[package]
+name = "mdviewer"
+version = "0.1.0"
+edition = "2024"
+description = "A tiny Markdown reader for Linux. Documents never touch the network."
+repository = "https://github.com/adjmx/mdviewer"
+readme = "README.md"
+publish = false
+
+[dependencies]
+comrak = { version = "~0.55.0", default-features = false }
+gtk4 = { version = "0.11.5", features = ["v4_14"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+ureq = "3.4.2"
+webkit6 = "0.6.1"
+
+[profile.release]
+lto = "thin"
+strip = true
+
+[package.metadata.deb]
+maintainer = "adjmx <admin@jmzx.uk>"
+copyright = "adjmx. No license has been chosen yet; all rights reserved. Bundled highlight.js is BSD-3-Clause."
+section = "text"
+priority = "optional"
+depends = "$auto"
+extended-description = """\
+A GTK4 + WebKitGTK Markdown reader: GitHub-flavored Markdown, syntax highlighting, \
+auto-refresh on save, light and dark mode, zoom and print. Documents are kept \
+offline by WebKit content-blocking rules and a Content Security Policy, and \
+scripts in documents never run."""
+assets = [
+    ["target/release/mdviewer", "usr/bin/", "755"],
+    ["packaging/uk.fizx.mdviewer.desktop", "usr/share/applications/", "644"],
+    ["packaging/icons/mdviewer-16.png", "usr/share/icons/hicolor/16x16/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-24.png", "usr/share/icons/hicolor/24x24/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-32.png", "usr/share/icons/hicolor/32x32/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-48.png", "usr/share/icons/hicolor/48x48/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-64.png", "usr/share/icons/hicolor/64x64/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-128.png", "usr/share/icons/hicolor/128x128/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-256.png", "usr/share/icons/hicolor/256x256/apps/mdviewer.png", "644"],
+    ["packaging/icons/mdviewer-512.png", "usr/share/icons/hicolor/512x512/apps/mdviewer.png", "644"],
+    ["README.md", "usr/share/doc/mdviewer/README.md", "644"],
+]
